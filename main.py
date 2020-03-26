@@ -14,9 +14,18 @@ import requests
 import multiprocessing
 from bs4 import BeautifulSoup
 
+import numpy
+import numpy as np
+
 import sys 
 #reload(sys) # Python2.5 初始化后删除了 sys.setdefaultencoding 方法，我们需要重新载入 
 #sys.setdefaultencoding('utf-8') 
+
+
+# 生成 0 ~ 9 之间的随机数
+ 
+# 导入 random(随机数) 模块
+import random
  
 ###################### 全局变量 ##############################
 url = 'https://www.mzitu.com/all'  # 需要爬取的网页地址
@@ -71,6 +80,9 @@ def main():
                 max_page = page.get_text()
                 os.chdir(img_dir)
                 str_title= dict_mulu['title'];
+
+                strDateeime = time.strftime('%Y-%m-%d_%H_%M_%S_');
+                str_title  = strDateeime + str_title
                 
                 str_title = str(dict_mulu['ID'])+'_'+ str_title
                 str_title = str_title.replace("'", '' );
@@ -96,7 +108,8 @@ def main():
                     img = (img_name, img_url)
                     imgs.append(img)
                 cores = multiprocessing.cpu_count()
-                cores = 3
+                #cores = 3
+                cores = 4
                 p = multiprocessing.Pool(processes=cores)
                 p.map(down, imgs)
                 p.close()
@@ -114,9 +127,14 @@ def down(imgs):
         print('下载图片...',name,image)
         print(str( '写入图像.'));
         f.write(img.content)
-        print(str( '开始睡眠8秒。'));
-        time.sleep(6);
-        print(str( '完成了一张图像的下载写入.并结束了睡眠8秒。'));
+        
+        #rng = np.random.RandomState(42) # 生成随机数时可指定一种子，目的是为了生成相同的随机数，实现代码的复现。
+        #X = rng.randn(100, 2)
+        
+        keyWait = 13# 5+ random.randint(1,2)
+        print(str( '开始睡眠 ')+ str(keyWait) + str('秒.')  );
+        time.sleep(keyWait);
+        print(str( '完成了一张图像的下载写入.并结束了睡眠 ')+ str(keyWait) + str('秒.'));
     f.close()
  
  
@@ -144,7 +162,7 @@ if __name__ == '__main__':
     print("#               以此怀念  2019.11.30                               #")
     print("####################################################################")
     print("____________________________________________________________________")
-    img_dir = 'D:/image_meizi_02/images'  # 设定存储爬取图片的路径
+    img_dir = 'I:/i_image_mzitu_02_down'  # 设定存储爬取图片的路径
     new_dir(img_dir)
     yanshi = 0.3  # 设定抓取图片延时(0.3秒)
     main()
